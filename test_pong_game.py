@@ -78,7 +78,7 @@ def test_game_initialization():
     game = pong_game.PongGame()
     assert game.player_score == 0
     assert game.computer_score == 0
-    assert game.game_over == False
+    assert not game.game_over
     assert game.winner is None
     print("✓ Game initialization test passed")
 
@@ -109,7 +109,7 @@ def test_game_over():
     # Test player winning
     game.player_score = pong_game.WINNING_SCORE
     game.check_game_over()
-    assert game.game_over == True
+    assert game.game_over
     assert game.winner == "Player"
     print("✓ Player win detection test passed")
     
@@ -117,7 +117,7 @@ def test_game_over():
     game.reset_game()
     game.computer_score = pong_game.WINNING_SCORE
     game.check_game_over()
-    assert game.game_over == True
+    assert game.game_over
     assert game.winner == "Computer"
     print("✓ Computer win detection test passed")
 
@@ -134,7 +134,7 @@ def test_game_reset():
     
     assert game.player_score == 0
     assert game.computer_score == 0
-    assert game.game_over == False
+    assert not game.game_over
     assert game.winner is None
     print("✓ Game reset test passed")
 

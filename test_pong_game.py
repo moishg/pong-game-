@@ -138,6 +138,22 @@ def test_game_reset():
     assert game.winner is None
     print("✓ Game reset test passed")
 
+def test_theme_toggle():
+    """Test that light/dark theme can be toggled"""
+    pygame.init()
+    game = pong_game.PongGame()
+
+    initial_theme = game.theme
+    initial_colors = game._colors()
+
+    game.toggle_theme()
+    assert game.theme != initial_theme
+    assert game._colors() != initial_colors
+
+    game.toggle_theme()
+    assert game.theme == initial_theme
+    print("✓ Theme toggle test passed")
+
 def run_all_tests():
     """Run all tests"""
     print("\n" + "="*50)
@@ -155,6 +171,7 @@ def run_all_tests():
         test_scoring()
         test_game_over()
         test_game_reset()
+        test_theme_toggle()
         
         print("\n" + "="*50)
         print("All tests passed! ✓")

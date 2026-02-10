@@ -5,7 +5,7 @@ A classic Pong game built with Python and Pygame where you play against the comp
 ## Features
 
 - **Player vs Computer**: Challenge the AI opponent
-- **Dark Theme**: Dark background with bright, contrasting colors for paddles and ball
+- **Light/Dark Mode Toggle**: Switch between light and dark themes during play
 - **Score Tracking**: First player to reach 7 goals wins
 - **Simple Controls**: Use arrow keys to control your paddle
 
@@ -37,6 +37,7 @@ python pong_game.py
 2. Controls:
    - **UP Arrow**: Move paddle up
    - **DOWN Arrow**: Move paddle down
+   - **T**: Toggle light/dark mode
 
 3. Objective:
    - Score goals by getting the ball past the computer's paddle
@@ -48,6 +49,7 @@ python pong_game.py
 - Dark background (black) for reduced eye strain
 - Bright white paddles for high visibility
 - Cyan ball for excellent contrast
+- Toggle between light/dark mode while playing (high-contrast colors in both)
 - Responsive computer AI that adapts to ball position
 - Smooth 60 FPS gameplay
 - Score display at the top of the screen

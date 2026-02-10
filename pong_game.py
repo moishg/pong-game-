@@ -15,6 +15,21 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 CYAN = (0, 255, 255)
 
+# Themes
+THEMES = {
+    "dark": {
+        "background": BLACK,
+        "foreground": WHITE,
+        "accent": CYAN,
+    },
+    "light": {
+        "background": WHITE,
+        "foreground": BLACK,
+        # Use black accent on a light background for maximum contrast
+        "accent": BLACK,
+    },
+}
+
 # Paddle settings
 PADDLE_WIDTH = 15
 PADDLE_HEIGHT = 100
@@ -42,8 +57,8 @@ class Paddle:
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, WHITE, self.rect)
+    def draw(self, screen, color=WHITE):
+        pygame.draw.rect(screen, color, self.rect)
 
 
 class Ball:
@@ -67,14 +82,15 @@ class Ball:
         self.speed_x = BALL_SPEED_X * random.choice([-1, 1])
         self.speed_y = BALL_SPEED_Y * random.choice([-1, 1])
 
-    def draw(self, screen):
-        pygame.draw.ellipse(screen, CYAN, self.rect)
+    def draw(self, screen, color=CYAN):
+        pygame.draw.ellipse(screen, color, self.rect)
 
 
 class PongGame:
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Pong Game")
+        self.theme = "dark"
+        pygame.display.set_caption(self._window_caption())
         self.clock = pygame.time.Clock()
         
         # Create paddles
@@ -95,6 +111,16 @@ class PongGame:
         # Game state
         self.game_over = False
         self.winner = None
+
+    def _window_caption(self):
+        return f"Pong Game ({self.theme.capitalize()} Mode)"
+
+    def toggle_theme(self):
+        self.theme = "light" if self.theme == "dark" else "dark"
+        pygame.display.set_caption(self._window_caption())
+
+    def _colors(self):
+        return THEMES[self.theme]
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
@@ -148,28 +174,32 @@ class PongGame:
             self.winner = "Computer"
 
     def draw(self):
+        colors = self._colors()
+
         # Draw background
-        self.screen.fill(BLACK)
+        self.screen.fill(colors["background"])
         
         # Draw center line
         for i in range(0, HEIGHT, 40):
-            pygame.draw.rect(self.screen, WHITE, (WIDTH // 2 - 2, i, 4, 20))
+            pygame.draw.rect(self.screen, colors["foreground"], (WIDTH // 2 - 2, i, 4, 20))
         
         # Draw paddles and ball
-        self.player_paddle.draw(self.screen)
-        self.computer_paddle.draw(self.screen)
-        self.ball.draw(self.screen)
+        self.player_paddle.draw(self.screen, colors["foreground"])
+        self.computer_paddle.draw(self.screen, colors["foreground"])
+        # In light mode, cyan has low contrast on white; use the foreground color instead.
+        ball_color = colors["accent"] if self.theme == "dark" else colors["foreground"]
+        self.ball.draw(self.screen, ball_color)
         
         # Draw scores
-        player_text = self.font.render(str(self.player_score), True, WHITE)
-        computer_text = self.font.render(str(self.computer_score), True, WHITE)
+        player_text = self.font.render(str(self.player_score), True, colors["foreground"])
+        computer_text = self.font.render(str(self.computer_score), True, colors["foreground"])
         self.screen.blit(player_text, (WIDTH // 4, 30))
         self.screen.blit(computer_text, (3 * WIDTH // 4 - computer_text.get_width(), 30))
         
         # Draw game over screen
         if self.game_over:
-            game_over_text = self.font.render(f"{self.winner} Wins!", True, CYAN)
-            restart_text = self.small_font.render("Press R to Restart or Q to Quit", True, WHITE)
+            game_over_text = self.font.render(f"{self.winner} Wins!", True, colors["accent"])
+            restart_text = self.small_font.render("Press R to Restart or Q to Quit", True, colors["foreground"])
             self.screen.blit(game_over_text, 
                            (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - 50))
             self.screen.blit(restart_text, 
@@ -193,6 +223,8 @@ class PongGame:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_t:
+                        self.toggle_theme()
                     if self.game_over:
                         if event.key == pygame.K_r:
                             self.reset_game()
